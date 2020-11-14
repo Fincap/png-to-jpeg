@@ -3,8 +3,8 @@
 block_cipher = None
 
 
-a = Analysis(['png-to-jpeg\\png-to-jpeg.py'],
-             pathex=['venv/Lib/site-packages', 'png-to-jpeg', 'D:\\dev\\png-to-jpeg'],
+a = Analysis(['png-to-jpeg/png-to-jpeg.py'],
+             pathex=['venv/Lib/site-packages', 'png-to-jpeg'],
              binaries=[],
              datas=[],
              hiddenimports=[],
