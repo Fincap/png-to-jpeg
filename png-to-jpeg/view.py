@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtCore
 
-from convert import get_file_list_from_folder
+from convert import get_file_list_from_folder, convert_png_to_jpeg
 
 
 class MainPage(QtWidgets.QMainWindow):
@@ -49,6 +49,10 @@ class MainPage(QtWidgets.QMainWindow):
         layout_output_location.addWidget(self.text_output_location)
         layout_output_location.addWidget(button_output_location)
 
+        # Convert button
+        button_convert = QtWidgets.QPushButton("Convert")
+        button_convert.clicked.connect(self.on_convert_clicked)
+
         # Add widgets to the left panel
         layout_left_panel.addWidget(label_browse_files)
         layout_left_panel.addWidget(button_browse_files)
@@ -57,6 +61,7 @@ class MainPage(QtWidgets.QMainWindow):
         layout_left_panel.addWidget(widget_slider_quality)
         layout_left_panel.addWidget(label_choose_destination)
         layout_left_panel.addWidget(widget_output_location)
+        layout_left_panel.addWidget(button_convert)
 
         central_layout.addWidget(left_panel)
         self.setCentralWidget(central_widget)
@@ -65,7 +70,6 @@ class MainPage(QtWidgets.QMainWindow):
         filepath = QtWidgets.QFileDialog.getExistingDirectory(self, "Open Directory")
         if filepath != '':
             self.file_list = get_file_list_from_folder(filepath)
-            print(self.file_list)
 
     def on_slider_updated(self, value):
         self.label_quality.setText(str(value))
@@ -74,6 +78,18 @@ class MainPage(QtWidgets.QMainWindow):
         filepath = QtWidgets.QFileDialog.getExistingDirectory(self, "Open Directory")
         if filepath != '':
             self.text_output_location.setText(filepath)
+
+    def on_convert_clicked(self):
+        if self.file_list is not None and len(self.file_list) == 0:
+            QtWidgets.QMessageBox.critical(self, "Unable to convert", "No files have been selected. Please choose a"
+                                                                      " directory of PNG files to convert.")
+        elif self.text_output_location.text() == '':
+            QtWidgets.QMessageBox.critical(self, "Unable to convert", "Destination folder not selected. Please choose a"
+                                                                      " destination directory before converting.")
+        else:
+            convert_png_to_jpeg(self.file_list, self.text_output_location.text(), self.slider_quality.value())
+            QtWidgets.QMessageBox.information(self, "Conversion complete", "JPEG files successfully output to selected"
+                                                                           " directory.")
 
 
 class QHLine(QtWidgets.QFrame):
