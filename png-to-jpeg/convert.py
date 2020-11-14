@@ -12,6 +12,10 @@ def convert_png_to_jpeg(file_paths: list, destination_folder: str, quality: int)
     :param quality: Quality of the output JPEG files on a scale from 0 (worst) to 95 (best).
     """
 
+    # If the output directory doesn't exist, it needs to be created first.
+    if not os.path.exists(destination_folder):
+        os.makedirs(destination_folder)
+
     for file in file_paths:
         # Generate new file name (i.e. given "/path/to/image.png", produce "output/folder/image.jpg"
         file_name_with_extension = os.path.basename(file)
