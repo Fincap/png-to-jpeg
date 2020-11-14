@@ -31,3 +31,18 @@ def convert_png_to_jpeg(file_paths: list, destination_folder: str, quality: int)
         logging.info("Converted image: %s, saved to: %s" % (file_name_with_extension, output_file_location))
 
     logging.info("Image conversion complete.")
+
+
+def get_file_list_from_folder(folder_to_check: str) -> list:
+    """
+    Generates a list of PNG files found within the given folder.
+    :param folder_to_check: The folder to check for PNG files.
+    :return: List of absolute file paths found.
+    """
+    file_path_list = []
+    for file in os.listdir(folder_to_check):
+        if file.endswith('.png'):
+            abs_path = folder_to_check + os.sep + file
+            file_path_list.append(abs_path)
+
+    return file_path_list
