@@ -1,8 +1,12 @@
 import sys
 
-from PIL import Image
+from PyQt5 import QtWidgets
+
+from view import MainPage
 
 if __name__ == '__main__':
-    im = Image.open(sys.argv[1])
-    rgb_im = im.convert('RGB')
-    rgb_im.save('output/colors.jpg', quality=75)
+    app = QtWidgets.QApplication(sys.argv)
+    main_window = MainPage()
+    main_window.show()
+
+    sys.exit(app.exec_())
