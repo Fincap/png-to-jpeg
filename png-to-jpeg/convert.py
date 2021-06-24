@@ -1,7 +1,9 @@
 import logging
 import os
+from io import BytesIO
 
 from PIL import Image
+from PyQt5 import QtGui
 
 
 def convert_png_to_jpeg(file_paths: list, destination_folder: str, quality: int):
@@ -46,3 +48,18 @@ def get_file_list_from_folder(folder_to_check: str) -> list:
             file_path_list.append(abs_path)
 
     return file_path_list
+
+
+def get_preview_pixmap(filepath: str, quality: int) -> QtGui.QPixmap:
+    """
+    Returns a QPixmap showing the result of a conversion of the given file and given quality.
+    :param filepath: Path to the PNG file being converted.
+    :param quality: Quality of the output JPEG file
+    :return: QPixmap of converted JPEG
+    """
+
+    im = Image.open(filepath)
+    rgb_im = im.convert('RGB')
+    output = BytesIO()
+    rgb_im.save(output, format="JPEG", quality=quality)
+    return QtGui.QPixmap.fromImage(QtGui.QImage.fromData(output.getvalue()))

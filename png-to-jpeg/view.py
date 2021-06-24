@@ -1,8 +1,8 @@
 import os
 
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 
-from convert import get_file_list_from_folder, convert_png_to_jpeg
+from convert import get_file_list_from_folder, convert_png_to_jpeg, get_preview_pixmap
 
 
 class MainPage(QtWidgets.QMainWindow):
@@ -55,6 +55,11 @@ class MainPage(QtWidgets.QMainWindow):
         button_convert = QtWidgets.QPushButton("Convert")
         button_convert.clicked.connect(self.on_convert_clicked)
 
+        # Selected image preview
+        layout_preview = QtWidgets.QLabel("Quality preview")
+        self.quality_preview_label = QtWidgets.QLabel()
+        self.quality_preview_label.setMaximumSize(250, 250)
+
         # Add widgets to the left panel
         layout_left_panel.addWidget(label_browse_files)
         layout_left_panel.addWidget(button_browse_files)
@@ -64,6 +69,8 @@ class MainPage(QtWidgets.QMainWindow):
         layout_left_panel.addWidget(label_choose_destination)
         layout_left_panel.addWidget(widget_output_location)
         layout_left_panel.addWidget(button_convert)
+        layout_left_panel.addWidget(layout_preview)
+        layout_left_panel.addWidget(self.quality_preview_label)
 
         # Create right panel
         right_panel = QtWidgets.QWidget()
@@ -73,6 +80,7 @@ class MainPage(QtWidgets.QMainWindow):
         # Found items listview
         label_found_files = QtWidgets.QLabel("Files to convert")
         self.list_found_files = QtWidgets.QListWidget()
+        self.list_found_files.clicked.connect(self.refresh_preview)
 
         # Add widgets to right panel
         layout_right_panel.addWidget(label_found_files)
@@ -81,6 +89,11 @@ class MainPage(QtWidgets.QMainWindow):
         central_layout.addWidget(left_panel)
         central_layout.addWidget(right_panel)
         self.setCentralWidget(central_widget)
+
+    def refresh_preview(self):
+        if self.list_found_files.currentRow() >= 0:
+            pixmap = get_preview_pixmap(self.file_list[self.list_found_files.currentRow()], self.slider_quality.value())
+            self.quality_preview_label.setPixmap(pixmap)
 
     def on_browse_clicked(self):
         filepath = QtWidgets.QFileDialog.getExistingDirectory(self, "Open Directory")
@@ -94,6 +107,7 @@ class MainPage(QtWidgets.QMainWindow):
 
     def on_slider_updated(self, value):
         self.label_quality.setText(str(value))
+        self.refresh_preview()
 
     def on_output_clicked(self):
         filepath = QtWidgets.QFileDialog.getExistingDirectory(self, "Open Directory")
