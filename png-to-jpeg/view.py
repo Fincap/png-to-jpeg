@@ -1,3 +1,5 @@
+import os
+
 from PyQt5 import QtWidgets, QtCore
 
 from convert import get_file_list_from_folder, convert_png_to_jpeg
@@ -9,7 +11,7 @@ class MainPage(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         self.setWindowTitle("png-to-jpeg")
 
-        self.file_list = None
+        self.file_list = []
 
         # Create central widget
         central_widget = QtWidgets.QWidget()
@@ -63,13 +65,32 @@ class MainPage(QtWidgets.QMainWindow):
         layout_left_panel.addWidget(widget_output_location)
         layout_left_panel.addWidget(button_convert)
 
+        # Create right panel
+        right_panel = QtWidgets.QWidget()
+        layout_right_panel = QtWidgets.QVBoxLayout(right_panel)
+        layout_right_panel.setAlignment(QtCore.Qt.AlignTop)
+
+        # Found items listview
+        label_found_files = QtWidgets.QLabel("Files to convert")
+        self.list_found_files = QtWidgets.QListWidget()
+
+        # Add widgets to right panel
+        layout_right_panel.addWidget(label_found_files)
+        layout_right_panel.addWidget(self.list_found_files)
+
         central_layout.addWidget(left_panel)
+        central_layout.addWidget(right_panel)
         self.setCentralWidget(central_widget)
 
     def on_browse_clicked(self):
         filepath = QtWidgets.QFileDialog.getExistingDirectory(self, "Open Directory")
         if filepath != '':
             self.file_list = get_file_list_from_folder(filepath)
+
+            # Update list of files loaded
+            self.list_found_files.clear()
+            entries = [os.path.basename(img) for img in self.file_list]  # Only show filenames
+            self.list_found_files.addItems(entries)
 
     def on_slider_updated(self, value):
         self.label_quality.setText(str(value))
