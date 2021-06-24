@@ -99,6 +99,7 @@ class MainPage(QtWidgets.QMainWindow):
         filepath = QtWidgets.QFileDialog.getExistingDirectory(self, "Open Directory")
         if filepath != '':
             self.file_list = get_file_list_from_folder(filepath)
+            self.text_output_location.setText(filepath + os.sep + "output")     # Set output folder to same location
 
             # Update list of files loaded
             self.list_found_files.clear()
